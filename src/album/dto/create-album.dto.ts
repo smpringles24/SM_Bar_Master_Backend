@@ -1,6 +1,6 @@
 import { IsString, IsDate, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateMemoryDto {
+export class CreateAlbumDto {
   @IsNotEmpty()
   @IsString()
   title: string;

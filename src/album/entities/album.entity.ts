@@ -5,12 +5,17 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { SongEntity } from './song.entity';
 
 @Entity()
-export class MemoryEntity extends BaseEntity {
+export class AlbumEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  memory_id: number;
+  album_id: number;
+
+  @Column()
+  image_url: string;
 
   @Column()
   title: string;
@@ -18,15 +23,12 @@ export class MemoryEntity extends BaseEntity {
   @Column()
   date: Date;
 
-  @Column()
-  customer_info: string; //객체로 변경
-
-  @Column()
-  menu_info: string; //객체 리스트로 변경
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => SongEntity, (songEntity) => songEntity.album)
+  songEntitys: SongEntity[];
 }

@@ -1,6 +1,6 @@
 import { IsString, IsDate, IsOptional } from 'class-validator';
 
-export class UpdateMemoryDto {
+export class UpdateAlbumDto {
   @IsOptional()
   @IsString()
   title?: string;
