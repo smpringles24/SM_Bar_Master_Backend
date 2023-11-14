@@ -23,6 +23,9 @@ export class AlbumEntity extends BaseEntity {
   @Column()
   date: Date;
 
+  @Column()
+  backgroundColor: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -21,6 +21,10 @@ export class CreateAlbumDto {
   @IsDate()
   date: Date;
 
+  @IsNotEmpty()
+  @IsString()
+  backgroundColor: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateSongDto)

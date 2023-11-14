@@ -10,6 +10,8 @@ export class AlbumService {
   constructor(
     @InjectRepository(AlbumEntity)
     private readonly albumRepository: Repository<AlbumEntity>,
+    @InjectRepository(SongEntity)
+    private readonly songRepository: Repository<SongEntity>,
   ) {}
 
   async createAlbum(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
@@ -17,24 +19,29 @@ export class AlbumService {
     album.image_url = createAlbumDto.image_url;
     album.title = createAlbumDto.title;
     album.date = new Date(createAlbumDto.date);
+    album.backgroundColor = createAlbumDto.backgroundColor;
 
-    const songs = createAlbumDto.songEntities.map((songData) => {
+    await this.albumRepository.save(album);
+
+    const songPromises = createAlbumDto.songEntities.map(async (songData) => {
       const song = new SongEntity();
       song.image_url = songData.image_url;
       song.image_data = songData.image_data;
       song.title = songData.title;
       song.content = songData.content;
       song.score = songData.score;
+      song.album = album;
+      await this.songRepository.save(song);
       return song;
     });
 
-    album.songEntities = songs;
-    await this.albumRepository.save(album);
+    album.songEntities = await Promise.all(songPromises);
+
     return album;
   }
 
   async findAll() {
-    return await this.albumRepository.find();
+    return await this.albumRepository.find({ relations: ['songEntities'] });
   }
 
   async findAllPreviewIamge() {
