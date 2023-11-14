@@ -30,5 +30,5 @@ export class AlbumEntity extends BaseEntity {
   updatedAt: Date;
 
   @OneToMany(() => SongEntity, (songEntity) => songEntity.album)
-  songEntitys: SongEntity[];
+  songEntities?: SongEntity[];
 }

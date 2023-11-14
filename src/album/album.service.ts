@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { CreateAlbumDto } from './dto/create_album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumEntity } from './entities/album.entity';
 import { Repository } from 'typeorm';
+import { SongEntity } from './entities/song.entity';
 
 @Injectable()
 export class AlbumService {
@@ -12,38 +12,38 @@ export class AlbumService {
     private readonly albumRepository: Repository<AlbumEntity>,
   ) {}
 
-  async create(createAlbumDto: CreateAlbumDto) {
-    const newAlbum: AlbumEntity =
-      await this.albumRepository.create(createAlbumDto);
-    return await this.albumRepository.save(newAlbum);
+  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
+    const album = new AlbumEntity();
+    album.image_url = createAlbumDto.image_url;
+    album.title = createAlbumDto.title;
+    album.date = new Date(createAlbumDto.date);
+
+    const songs = createAlbumDto.songEntities.map((songData) => {
+      const song = new SongEntity();
+      song.image_url = songData.image_url;
+      song.image_data = songData.image_data;
+      song.title = songData.title;
+      song.content = songData.content;
+      song.score = songData.score;
+      return song;
+    });
+
+    album.songEntities = songs;
+    await this.albumRepository.save(album);
+    return album;
   }
 
   async findAll() {
     return await this.albumRepository.find();
   }
 
-  async findById(id: number) {
-    return await this.albumRepository.findOne({ where: { album_id: id } });
+  async findAllPreviewIamge() {
+    return await this.albumRepository.find({
+      select: ['album_id', 'image_url'],
+    });
   }
 
-  async update(id: number, updateMeomoryDto: UpdateAlbumDto) {
-    if (updateMeomoryDto) {
-      const targetAlbum = await this.albumRepository.findOne({
-        where: { album_id: id },
-      });
-      const updateAlbum = {
-        ...targetAlbum,
-        ...updateMeomoryDto,
-      };
-
-      await this.albumRepository.remove(targetAlbum);
-      return await this.albumRepository.save(updateAlbum);
-    } else {
-      return '수정할 내용이 없습니다.';
-    }
-  }
-
-  async remove(id: number) {
-    return await this.albumRepository.delete(id);
+  async deleteAlbum(album_id: number) {
+    return await this.albumRepository.delete(album_id);
   }
 }

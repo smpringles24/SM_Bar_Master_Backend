@@ -27,6 +27,6 @@ export class SongEntity extends BaseEntity {
   @Column()
   score: number;
 
-  @ManyToOne(() => AlbumEntity, (album) => album.songEntitys)
+  @ManyToOne(() => AlbumEntity, (album) => album.songEntities)
   album: AlbumEntity;
 }
