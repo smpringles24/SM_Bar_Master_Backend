@@ -21,6 +21,11 @@ export class AlbumController {
     return this.albumService.findAllPreviewIamge();
   }
 
+  @Get(':album_id')
+  findOne(@Param('album_id') album_id: number) {
+    return this.albumService.findAlbumById(album_id);
+  }
+
   @Delete(':album_id')
   deleteAlbum(@Param('album_id') album_id: number) {
     return this.albumService.deleteAlbum(album_id);

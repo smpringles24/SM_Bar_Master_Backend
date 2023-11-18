@@ -61,6 +61,21 @@ export class AlbumService {
     });
   }
 
+  async findAlbumById(album_id: number) {
+    return await this.albumRepository.findOne({
+      where: { album_id },
+      relations: ['songEntities'],
+      select: [
+        'album_id',
+        'image_url',
+        'title',
+        'date',
+        'backgroundColor',
+        'songEntities',
+      ],
+    });
+  }
+
   async deleteAlbum(album_id: number) {
     const album = await this.albumRepository.findOne({
       where: { album_id },
