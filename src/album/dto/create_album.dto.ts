@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsDate,
-  IsNotEmpty,
-  IsArray,
-  ValidateNested,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, ValidateNested } from 'class-validator';
 import { CreateSongDto } from './create_song_dto';
 import { Type } from 'class-transformer';
 
@@ -18,8 +12,8 @@ export class CreateAlbumDto {
   title: string;
 
   @IsNotEmpty()
-  @IsDate()
-  date: Date;
+  @IsString()
+  date: string;
 
   @IsNotEmpty()
   @IsString()

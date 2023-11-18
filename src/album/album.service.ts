@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumEntity } from './entities/album.entity';
 import { Repository } from 'typeorm';
 import { SongEntity } from './entities/song.entity';
+import { classToPlain } from 'class-transformer';
 
 @Injectable()
 export class AlbumService {
@@ -14,11 +15,11 @@ export class AlbumService {
     private readonly songRepository: Repository<SongEntity>,
   ) {}
 
-  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
+  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<any> {
     const album = new AlbumEntity();
     album.image_url = createAlbumDto.image_url;
     album.title = createAlbumDto.title;
-    album.date = new Date(createAlbumDto.date);
+    album.date = createAlbumDto.date;
     album.backgroundColor = createAlbumDto.backgroundColor;
 
     await this.albumRepository.save(album);
@@ -37,11 +38,21 @@ export class AlbumService {
 
     album.songEntities = await Promise.all(songPromises);
 
-    return album;
+    return classToPlain(album);
   }
 
   async findAll() {
-    return await this.albumRepository.find({ relations: ['songEntities'] });
+    return await this.albumRepository.find({
+      relations: ['songEntities'],
+      select: [
+        'album_id',
+        'image_url',
+        'title',
+        'date',
+        'backgroundColor',
+        'songEntities',
+      ],
+    });
   }
 
   async findAllPreviewIamge() {
@@ -51,6 +62,17 @@ export class AlbumService {
   }
 
   async deleteAlbum(album_id: number) {
+    const album = await this.albumRepository.findOne({
+      where: { album_id },
+      relations: ['songEntities'],
+    });
+
+    if (album) {
+      await Promise.all(
+        album.songEntities.map((song) => this.songRepository.remove(song)),
+      );
+    }
+
     return await this.albumRepository.delete(album_id);
   }
 }

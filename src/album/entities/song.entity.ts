@@ -6,6 +6,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 import { AlbumEntity } from './album.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class SongEntity extends BaseEntity {
@@ -28,5 +29,6 @@ export class SongEntity extends BaseEntity {
   score: number;
 
   @ManyToOne(() => AlbumEntity, (album) => album.songEntities)
+  @Exclude({ toPlainOnly: true })
   album: AlbumEntity;
 }

@@ -21,7 +21,7 @@ export class AlbumEntity extends BaseEntity {
   title: string;
 
   @Column()
-  date: Date;
+  date: string;
 
   @Column()
   backgroundColor: string;
